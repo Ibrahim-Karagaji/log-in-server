@@ -3,10 +3,16 @@ const usersControllers = require("../controllers/usersControllers");
 const validateUser = require("../middleware/validateUser");
 const validateLogin = require("../middleware/validateLogin");
 const validateAuth = require("../middleware/validateAuth");
+const uploads = require("../middleware/uploadMiddleware");
 
 route.get("/get-user", validateAuth, usersControllers.getUserData);
 route.post("/", validateUser, usersControllers.register);
-route.put("/", validateAuth, usersControllers.updateUser);
+route.put(
+  "/",
+  validateAuth,
+  uploads.single("userLogo"),
+  usersControllers.updateUser
+);
 route.post("/log-in", validateLogin, usersControllers.logInUser);
 route.post("/reset-password-code", usersControllers.resetPasswordCode);
 route.post(
