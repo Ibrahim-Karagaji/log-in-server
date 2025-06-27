@@ -15,6 +15,13 @@ const usersSchema = new mongoose.Schema({
     required: true,
     minLength: 6,
   },
+  userLogo: {
+    type: String,
+    default: "/uploads/download.jpeg",
+  },
+  logoID: {
+    type: String,
+  },
 });
 
 const User = mongoose.model("User", usersSchema);
