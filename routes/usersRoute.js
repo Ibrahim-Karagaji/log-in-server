@@ -5,18 +5,33 @@ const validateLogin = require("../middleware/validateLogin");
 const validateAuth = require("../middleware/validateAuth");
 const uploads = require("../middleware/uploadMiddleware");
 
-route.get("/get-user", validateAuth, usersControllers.getUserData);
-route.post("/", validateUser, usersControllers.register);
+route.get(
+  "/get-user",
+  uploads.none(),
+  validateAuth,
+  usersControllers.getUserData
+);
+route.post("/", uploads.none(), validateUser, usersControllers.register);
 route.put(
   "/",
-  validateAuth,
   uploads.single("userLogo"),
+  validateAuth,
   usersControllers.updateUser
 );
-route.post("/log-in", validateLogin, usersControllers.logInUser);
-route.post("/reset-password-code", usersControllers.resetPasswordCode);
+route.post(
+  "/log-in",
+  uploads.none(),
+  validateLogin,
+  usersControllers.logInUser
+);
+route.post(
+  "/reset-password-code",
+  uploads.none(),
+  usersControllers.resetPasswordCode
+);
 route.post(
   "/check-reset-password-code",
+  uploads.none(),
   validateAuth,
   usersControllers.checkRestPasswordCode
 );
