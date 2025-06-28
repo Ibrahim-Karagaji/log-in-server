@@ -1,4 +1,4 @@
-const cloudinary = require("./config/cloudinaryConfig");
+const cloudinary = require("cloudinary").v2;
 
 const uploadToCloudinary = async (buffer) => {
   return new Promise((resolve, reject) => {
@@ -8,8 +8,8 @@ const uploadToCloudinary = async (buffer) => {
           folder: "uploads",
           eager: [
             {
-              with: 300,
-              heghit: 300,
+              width: 300,
+              height: 300,
               crop: "fill",
               format: "webp",
               quality: "auto",
