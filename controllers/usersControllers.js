@@ -4,6 +4,7 @@ const jsonwebtoken = require("jsonwebtoken");
 const errorMessages = require("../utils/errorMessages");
 const successMessages = require("../utils/successMessages");
 const generatePassword = require("generate-password");
+const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
 const register = async (req, res) => {
   try {
@@ -21,6 +22,8 @@ const register = async (req, res) => {
       name: name,
       email: email,
       password: hashPassword,
+      userLogo: "",
+      logoID: "",
       role: "user",
     });
 
@@ -29,7 +32,6 @@ const register = async (req, res) => {
     const token = jsonwebtoken.sign(
       {
         id: newUser._id,
-        name: newUser.name,
         email: newUser.email,
         role: newUser.role,
       },
@@ -44,6 +46,8 @@ const register = async (req, res) => {
         id: newUser._id,
         name: newUser.name,
         email: newUser.email,
+        userLogo: newUser.userLogo,
+        logoID: newUser.logoID,
       },
       token: token,
     });
@@ -60,7 +64,13 @@ const updateUser = async (req, res) => {
 
     const keys = Object.keys(req.body);
 
-    if (keys.length == 0) {
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file.buffer);
+      req.body.userLogo = result.secure_url;
+      req.body.logoID = result.public_id;
+    }
+
+    if (keys.length == 0 && !req.file) {
       return res
         .status(400)
         .json({ message: "Update request must include at least one field." });
@@ -119,7 +129,11 @@ const logInUser = async (req, res) => {
     }
 
     const token = jsonwebtoken.sign(
-      { id: user._id, name: user.name, email: user.email, role: user.role },
+      {
+        id: user._id,
+        email: user.email,
+        role: "user",
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -127,7 +141,12 @@ const logInUser = async (req, res) => {
     res.status(200).json({
       ok: true,
       message: successMessages.auth.loggedIn,
-      user: { name: user.name, email: user.email },
+      user: {
+        name: user.name,
+        email: user.email,
+        userLogo: user.userLogo,
+        logoID: user.logoID,
+      },
       token: token,
     });
   } catch (err) {
@@ -139,7 +158,7 @@ const logInUser = async (req, res) => {
 
 const getUserData = async (req, res) => {
   try {
-    const user = req.user;
+    const user = await User.findById(req.user.id);
     res
       .status(200)
       .json({ message: successMessages.auth.loggedIn, user: user });
