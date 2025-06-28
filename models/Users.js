@@ -17,7 +17,6 @@ const usersSchema = new mongoose.Schema({
   },
   userLogo: {
     type: String,
-    default: "/uploads/download.jpeg",
   },
   logoID: {
     type: String,
