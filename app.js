@@ -7,6 +7,7 @@ require("dotenv").config();
 const cors = require("cors");
 const cloudinary = require("./config/cloudinaryConfig");
 
+app.use(express.json());
 app.use(cors());
 app.use("/users", userRoute);
 app.use("/admin", adminRoute);

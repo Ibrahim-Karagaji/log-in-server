@@ -21,6 +21,9 @@ const usersSchema = new mongoose.Schema({
   logoID: {
     type: String,
   },
+  verified: { type: Boolean, default: false },
+  emailVerificationToken: String,
+  emailVerificationTokenExpires: Date,
 });
 
 const User = mongoose.model("User", usersSchema);
